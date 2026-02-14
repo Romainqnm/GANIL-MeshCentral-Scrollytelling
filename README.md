@@ -11,9 +11,10 @@ Plutôt qu'un diaporama statique (PowerPoint), j'ai développé une **expérienc
 ### 🚀 Pourquoi ce choix technique ?
 
 Ce format reflète les compétences acquises durant le stage et la nature du projet **MeshCentral** :
-1.  **Web-First :** Tout comme MeshCentral (Node.js), cette présentation vit dans le navigateur.
-2.  **Fluidité :** Le format "Scroll" permet de raconter l'histoire de la migration sans interruption.
-3.  **Légèreté :** Aucune installation lourde requise, technologies standards (HTML5 / TailwindCSS).
+
+1. **Web-First :** Tout comme MeshCentral (Node.js), cette présentation vit dans le navigateur.
+2. **Fluidité :** Le format "Scroll" permet de raconter l'histoire de la migration sans interruption.
+3. **Légèreté :** Aucune installation lourde requise, technologies standards (HTML5 / TailwindCSS).
 
 ## 🛠️ Stack Technique
 
@@ -26,21 +27,23 @@ Ce format reflète les compétences acquises durant le stage et la nature du pro
 
 Le projet ne nécessite aucune compilation complexe.
 
-1.  **Cloner le dépôt :**
-    ```bash
-    git clone [https://github.com/ton-pseudo/ganil-meshcentral-defense.git](https://github.com/ton-pseudo/ganil-meshcentral-defense.git)
-    ```
+1. **Cloner le dépôt :**
 
-2.  **Lancer un serveur local :**
-    ```bash
-    # Avec Python
-    python3 -m http.server 3000
+   ```bash
+   git clone [https://github.com/ton-pseudo/ganil-meshcentral-defense.git](https://github.com/ton-pseudo/ganil-meshcentral-defense.git)
+   ```
 
-    # OU avec Node.js (npx)
-    npx serve
-    ```
+2. **Lancer un serveur local :**
 
-3.  **Ouvrir le navigateur :** `http://localhost:3000`
+   ```bash
+   # Avec Python
+   python3 -m http.server 3000
+
+   # OU avec Node.js (npx)
+   npx serve
+   ```
+
+3. **Ouvrir le navigateur :** `http://localhost:3000`
 
 ---
-*Développé sur GitHub Codespaces - 2026*
+Développé sur GitHub Codespaces - 2026.

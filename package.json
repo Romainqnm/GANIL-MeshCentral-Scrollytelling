@@ -1,0 +1,24 @@
+{
+  "name": "ganil-meshcentral-scrollytelling",
+  "version": "1.0.0",
+  "description": "> **Sujet :** Modernisation de la télémaintenance sécurisée (Migration VNC vers MeshCentral). > **Auteur :** Romain QUONIAM (Service G2I)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Romainqnm/GANIL-MeshCentral-Scrollytelling.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Romainqnm/GANIL-MeshCentral-Scrollytelling/issues"
+  },
+  "homepage": "https://github.com/Romainqnm/GANIL-MeshCentral-Scrollytelling#readme",
+  "dependencies": {
+    "serve": "^14.2.5"
+  }
+}
