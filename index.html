@@ -6,210 +6,897 @@
     <title>Soutenance GANIL - Diapositives</title>
     <meta
       name="description"
-      content="Diapositives de soutenance GANIL affichées en scrollytelling image par image."
+      content="Diapositives GANIL avec transitions immersives: montée des eaux, data tunnel et blueprint scan."
     />
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["Inter", "sans-serif"],
-            },
-            colors: {
-              slateNight: "#060b16",
-              slateDeep: "#0b1220",
-              electric: "#3b82f6",
-            },
-          },
-        },
-      };
-    </script>
-
     <style>
-      html {
-        scroll-behavior: smooth;
-        scroll-snap-type: y mandatory;
+      :root {
+        --bg-deep: #0f172a;
+        --bg-night: #020617;
+        --cyan: #22d3ee;
+        --neon-blue: #38bdf8;
+        --line-white: #e2e8f0;
+        --transition-duration: 1420ms;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
       }
 
       body {
-        min-height: 100vh;
         margin: 0;
-        line-height: 1.5;
+        overflow: hidden;
+        font-family: Inter, sans-serif;
+        background: radial-gradient(circle at 20% 0%, #14254d 0%, var(--bg-deep) 40%, var(--bg-night) 100%);
+        color: #dbeafe;
         transition: background 260ms ease, color 260ms ease;
       }
 
       body.theme-dark {
-        background: radial-gradient(circle at 20% 0%, #1e293b 0%, #0b1220 42%, #060b16 100%);
-        color: #e2e8f0;
+        background: radial-gradient(circle at 20% 0%, #14254d 0%, #0d1d3f 34%, #060f23 65%, #020617 100%);
       }
 
       body.theme-light {
-        background: radial-gradient(circle at 50% -10%, #ffffff 0%, #eef2f7 52%, #dde5ef 100%);
-        color: #0f172a;
+        background: radial-gradient(circle at 50% -10%, #1a315f 0%, #10264f 46%, #08142d 100%);
       }
 
-      main {
-        padding: 0.6rem;
+      #progressTrack {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 70;
+        width: 100%;
+        height: 0.95rem;
+        background: rgba(15, 23, 42, 0.64);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.42);
+        backdrop-filter: blur(10px) saturate(130%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+
+      #progressBar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #2563eb, #0ea5e9 45%, #67e8f9 100%);
+        box-shadow: 0 0 16px rgba(34, 211, 238, 0.75);
+        transition: width 260ms ease;
+      }
+
+      #slideCounter {
+        position: fixed;
+        right: 1rem;
+        top: 1.45rem;
+        z-index: 80;
+        min-width: 6.4rem;
+        padding: 0.52rem 0.92rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-align: center;
+        color: #dbeafe;
+        background: rgba(8, 22, 52, 0.74);
+        border: 1px solid rgba(103, 232, 249, 0.36);
+        backdrop-filter: blur(14px) saturate(145%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(2, 6, 23, 0.45);
+      }
+
+      #sessionDate {
+        position: fixed;
+        left: 1rem;
+        top: 1.45rem;
+        z-index: 80;
+        min-width: 7.4rem;
+        padding: 0.52rem 0.92rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-align: center;
+        color: #dbeafe;
+        background: rgba(8, 22, 52, 0.74);
+        border: 1px solid rgba(103, 232, 249, 0.36);
+        backdrop-filter: blur(14px) saturate(145%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(2, 6, 23, 0.45);
+      }
+
+      #stage {
+        position: fixed;
+        inset: 0;
+        padding: 1.15rem 0.65rem 0.65rem;
       }
 
       .slide {
-        position: relative;
-        height: calc(100vh - 1.2rem);
-        min-height: calc(100vh - 1.2rem);
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-        margin-bottom: 0.6rem;
+        position: absolute;
+        inset: 1.15rem 0.65rem 0.65rem;
         border-radius: 1.25rem;
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        background: rgba(15, 23, 42, 0.75);
-        box-shadow: 0 24px 50px rgba(2, 6, 23, 0.55);
-        overflow: hidden;
-        display: flex;
+        border: 1px solid rgba(56, 189, 248, 0.22);
+        display: none;
         align-items: center;
         justify-content: center;
         padding: clamp(0.2rem, 0.9vw, 0.65rem);
-        transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+        opacity: 0;
+        transform: scale(1.02);
+        pointer-events: none;
+        transition: opacity 320ms ease, transform 320ms ease, background 220ms ease, box-shadow 220ms ease;
+        transform-style: preserve-3d;
       }
 
-      .slide[data-theme="light"] {
-        background: linear-gradient(135deg, #f8fafc 0%, #eff4f9 100%);
-        border-color: rgba(148, 163, 184, 0.35);
-        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background:
+          linear-gradient(160deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0) 42%),
+          radial-gradient(circle at 85% 10%, rgba(103, 232, 249, 0.14), transparent 30%);
       }
 
       .slide[data-theme="dark"] {
-        background: rgba(15, 23, 42, 0.75);
-        border-color: rgba(148, 163, 184, 0.22);
+        background: linear-gradient(145deg, rgba(7, 15, 34, 0.96), rgba(3, 8, 20, 0.96));
+        box-shadow: 0 26px 58px rgba(2, 6, 23, 0.72);
       }
 
-      .slide:last-child {
-        margin-bottom: 0;
+      .slide[data-theme="light"] {
+        background: linear-gradient(145deg, rgba(9, 22, 50, 0.94), rgba(6, 16, 36, 0.94));
+        box-shadow: 0 24px 54px rgba(2, 6, 23, 0.66);
+      }
+
+      .slide.active {
+        display: flex;
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+      }
+
+      .slide.transition-out {
+        display: flex;
+        animation: slideSinkOut var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      .slide.transition-in {
+        display: flex;
+        animation: slideRiseIn var(--transition-duration) cubic-bezier(0.16, 0.74, 0.24, 1) both;
       }
 
       .slide img {
         width: 100%;
         height: 100%;
         object-fit: contain;
-        background: #020617;
-        border-radius: 0.9rem;
-      }
-
-      .slide[data-theme="light"] img {
-        background: #ffffff;
+        border-radius: 0.95rem;
       }
 
       .slide[data-theme="dark"] img {
         background: #020617;
       }
 
-      #progressTrack {
-        background: rgba(15, 23, 42, 0.45);
-        transition: background 220ms ease;
+      .slide[data-theme="light"] img {
+        background: #ffffff;
       }
 
-      body.theme-light #progressTrack {
-        background: rgba(148, 163, 184, 0.35);
+      #fxOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 75;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        display: none;
       }
 
-      #progressBar {
-        background: linear-gradient(90deg, #3b82f6, #22d3ee);
+      #fxOverlay.transitioning {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+      }
+
+      #fxOverlay:not(.transitioning) .fx-layer {
+        opacity: 0 !important;
+        animation: none !important;
+      }
+
+      #fxOverlay:not(.transitioning) .fx-water .water-body {
+        transform: translateY(108%) !important;
+      }
+
+      #fxOverlay:not(.transitioning) .fx-water .water-depth {
+        opacity: 0 !important;
+      }
+
+      .fx-layer {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+      }
+
+      .fx-dim {
+        background:
+          radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.36), rgba(2, 6, 23, 0.88)),
+          linear-gradient(180deg, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.85));
+      }
+
+      /* ---------- 1) MONTÉE DES EAUX ---------- */
+      .fx-water {
+        background:
+          radial-gradient(circle at 22% 24%, rgba(56, 189, 248, 0.24), transparent 36%),
+          radial-gradient(circle at 76% 78%, rgba(34, 211, 238, 0.2), transparent 42%),
+          linear-gradient(180deg, rgba(2, 6, 23, 0.92), rgba(2, 6, 23, 0.98));
+      }
+
+      .fx-water .water-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 120%;
+        background: linear-gradient(
+          180deg,
+          rgba(56, 189, 248, 0.16) 0%,
+          rgba(14, 116, 144, 0.42) 12%,
+          #0a1b3e 34%,
+          #081735 60%,
+          #040b1b 100%
+        );
+        transform: translateY(108%);
+        will-change: transform;
+      }
+
+      .fx-water svg {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 300px;
+        top: -132px;
+        transform: translateZ(0);
+        filter: drop-shadow(0 -8px 14px rgba(34, 211, 238, 0.45));
+      }
+
+      .fx-water .water-depth {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 110%, rgba(2, 6, 23, 0.96), rgba(2, 6, 23, 0.2) 35%, transparent 60%),
+          linear-gradient(180deg, transparent 42%, rgba(2, 6, 23, 0.74));
+        opacity: 0;
+      }
+
+      #fxOverlay.transitioning.effect-water .fx-water {
+        opacity: 1;
+        animation: waterOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1);
+      }
+
+      #fxOverlay.transitioning.effect-water .fx-dim {
+        animation: dimPulse var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1);
+      }
+
+      #fxOverlay.transitioning.effect-water .water-body {
+        animation: waterRiseCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1);
+      }
+
+      #fxOverlay.transitioning.effect-water .water-depth {
+        animation: waterDepthCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1);
+      }
+
+      /* ---------- 2) DATA TUNNEL ---------- */
+      .fx-tunnel {
+        background: #01040c;
+      }
+
+      .fx-tunnel .tunnel-grid {
+        position: absolute;
+        inset: -30%;
+        background:
+          repeating-linear-gradient(90deg, transparent 0 46px, rgba(34, 211, 238, 0.36) 47px 48px),
+          repeating-linear-gradient(0deg, transparent 0 46px, rgba(56, 189, 248, 0.24) 47px 48px);
+        transform-origin: center;
+        opacity: 0;
+      }
+
+      .fx-tunnel .tunnel-rings {
+        position: absolute;
+        inset: -12%;
+        background: repeating-radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.42) 0 2px, rgba(2, 6, 23, 0) 2px 56px);
+        opacity: 0;
+      }
+
+      .fx-tunnel .data-rain {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        opacity: 0;
+      }
+
+      .fx-tunnel .data-rain span {
+        position: absolute;
+        top: -12%;
+        left: calc(var(--x) * 1%);
+        color: rgba(103, 232, 249, 0.82);
+        font-size: calc(11px + var(--size) * 1px);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-shadow: 0 0 10px rgba(34, 211, 238, 0.75);
+        transform: translateY(-20%) scale(calc(0.7 + var(--size) * 0.03));
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .fx-tunnel {
+        opacity: 1;
+        animation: tunnelOverlayCycle var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .fx-dim {
+        animation: dimPulseStrong var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .tunnel-grid {
+        animation: tunnelGridDive var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .tunnel-rings {
+        animation: tunnelRingsDive var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .data-rain {
+        animation: tunnelRainOpacity var(--transition-duration) linear both;
+      }
+
+      #fxOverlay.transitioning.effect-tunnel .data-rain span {
+        animation: dataBitFly var(--transition-duration) linear both;
+        animation-delay: calc(var(--delay) * 1ms);
+      }
+
+      /* ---------- 3) BLUEPRINT SCAN ---------- */
+      .fx-blueprint {
+        background: #050d1f;
+      }
+
+      .fx-blueprint .blueprint-base,
+      .fx-blueprint .blueprint-reveal {
+        position: absolute;
+        inset: 0;
+      }
+
+      .fx-blueprint .blueprint-base {
+        background:
+          linear-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(56, 189, 248, 0.12) 1px, transparent 1px),
+          radial-gradient(circle at 50% 48%, rgba(2, 132, 199, 0.2), transparent 55%),
+          linear-gradient(180deg, #07122a 0%, #030914 100%);
+        background-size: 40px 40px, 40px 40px, auto, auto;
+      }
+
+      .fx-blueprint .blueprint-reveal {
+        background:
+          linear-gradient(rgba(226, 232, 240, 0.14) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(226, 232, 240, 0.12) 1px, transparent 1px),
+          repeating-linear-gradient(28deg, rgba(226, 232, 240, 0.14) 0 2px, transparent 2px 14px),
+          radial-gradient(circle at 42% 45%, rgba(56, 189, 248, 0.3), transparent 55%),
+          linear-gradient(180deg, #0b1f45 0%, #081a3a 100%);
+        background-size: 40px 40px, 40px 40px, auto, auto, auto;
+        clip-path: inset(0 100% 0 0);
+      }
+
+      .fx-blueprint .scan-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 14px;
+        left: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(167, 243, 255, 0.95), rgba(255, 255, 255, 0));
+        box-shadow: 0 0 24px rgba(103, 232, 249, 0.95), 0 0 64px rgba(34, 211, 238, 0.65);
+        opacity: 0;
+      }
+
+      #fxOverlay.transitioning.effect-blueprint .fx-blueprint {
+        opacity: 1;
+        animation: blueprintOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-blueprint .fx-dim {
+        animation: dimPulse var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-blueprint .blueprint-reveal {
+        animation: blueprintRevealCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+
+      #fxOverlay.transitioning.effect-blueprint .scan-line {
+        animation: blueprintScanCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+
+      /* ---------- KEYFRAMES ---------- */
+      @keyframes waterOverlayCycle {
+        0% { opacity: 0; }
+        14% { opacity: 1; }
+        68% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes dimPulse {
+        0% { opacity: 0; }
+        16% { opacity: 0.36; }
+        52% { opacity: 0.58; }
+        78% { opacity: 0.44; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes dimPulseStrong {
+        0% { opacity: 0; }
+        18% { opacity: 0.46; }
+        50% { opacity: 0.72; }
+        78% { opacity: 0.54; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes waterRiseCycle {
+        0% { transform: translateY(108%); }
+        30% { transform: translateY(72%); }
+        48% { transform: translateY(58%); }
+        58% { transform: translateY(52%); }
+        68% { transform: translateY(56%); }
+        78% { transform: translateY(53%); }
+        100% { transform: translateY(108%); }
+      }
+
+      @keyframes waterDepthCycle {
+        0% { opacity: 0; }
+        34% { opacity: 0.62; }
+        58% { opacity: 0.84; }
+        72% { opacity: 0.76; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes tunnelOverlayCycle {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        72% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes tunnelGridDive {
+        0% {
+          opacity: 0;
+          transform: perspective(780px) rotateX(76deg) scale(2.6) translateY(26%);
+        }
+        24% { opacity: 0.9; }
+        66% {
+          opacity: 0.86;
+          transform: perspective(780px) rotateX(76deg) scale(1.16) translateY(2%);
+        }
+        100% {
+          opacity: 0;
+          transform: perspective(780px) rotateX(76deg) scale(0.72) translateY(-10%);
+        }
+      }
+
+      @keyframes tunnelRingsDive {
+        0% {
+          opacity: 0;
+          transform: scale(0.24);
+        }
+        28% { opacity: 0.74; }
+        64% {
+          opacity: 0.66;
+          transform: scale(1.55);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(2.55);
+        }
+      }
+
+      @keyframes tunnelRainOpacity {
+        0% { opacity: 0; }
+        16% { opacity: 1; }
+        70% { opacity: 0.92; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes dataBitFly {
+        0% { transform: translateY(-35vh) scale(0.6); opacity: 0; }
+        12% { opacity: 0.95; }
+        68% { opacity: 0.75; }
+        100% { transform: translateY(120vh) scale(1.5); opacity: 0; }
+      }
+
+      @keyframes blueprintOverlayCycle {
+        0% { opacity: 0; }
+        12% { opacity: 1; }
+        72% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes blueprintRevealCycle {
+        0% { clip-path: inset(0 100% 0 0); }
+        48% { clip-path: inset(0 0% 0 0); }
+        66% { clip-path: inset(0 0% 0 0); }
+        100% { clip-path: inset(0 100% 0 0); }
+      }
+
+      @keyframes blueprintScanCycle {
+        0% { left: -4%; opacity: 0; }
+        18% { opacity: 1; }
+        58% { left: 100%; opacity: 1; }
+        100% { left: 104%; opacity: 0; }
+      }
+
+      @keyframes slideSinkOut {
+        0% {
+          transform: scale(1) translateZ(0) rotateX(0deg);
+          filter: brightness(1) saturate(1);
+        }
+        56% {
+          transform: scale(1.09) translateY(1.2%) rotateX(4deg);
+          filter: brightness(1.04) saturate(1.05);
+        }
+        100% {
+          transform: scale(0.82) translateY(5%) rotateX(14deg);
+          filter: brightness(0.68) saturate(1.24);
+        }
+      }
+
+      @keyframes slideRiseIn {
+        0% {
+          transform: scale(1.22) translateY(-4%) rotateX(-10deg);
+          filter: brightness(1.2) saturate(1.15);
+        }
+        52% {
+          transform: scale(1.03) translateY(0.5%) rotateX(1deg);
+          filter: brightness(1.04) saturate(1.05);
+        }
+        100% {
+          transform: scale(1) translateY(0) rotateX(0deg);
+          filter: brightness(1) saturate(1);
+        }
       }
     </style>
   </head>
 
-  <body class="theme-dark font-sans antialiased">
-    <div id="progressTrack" class="fixed top-0 left-0 z-50 h-1.5 w-full">
-      <div id="progressBar" class="h-full w-0 transition-[width] duration-150"></div>
+  <body class="theme-dark">
+    <div id="progressTrack"><div id="progressBar"></div></div>
+    <div id="sessionDate">17/02/2026</div>
+    <div id="slideCounter" aria-live="polite">1/15</div>
+
+    <main id="stage"></main>
+
+    <div id="fxOverlay" aria-hidden="true">
+      <div class="fx-layer fx-dim"></div>
+
+      <div class="fx-layer fx-water">
+        <div class="water-body">
+          <svg viewBox="0 0 1000 220" preserveAspectRatio="none" aria-hidden="true">
+            <path id="waveA" fill="rgba(56,189,248,0.88)"></path>
+            <path id="waveB" fill="rgba(34,211,238,0.54)"></path>
+          </svg>
+        </div>
+        <div class="water-depth"></div>
+      </div>
+
+      <div class="fx-layer fx-tunnel">
+        <div class="tunnel-grid"></div>
+        <div class="tunnel-rings"></div>
+        <div id="dataRain" class="data-rain"></div>
+      </div>
+
+      <div class="fx-layer fx-blueprint">
+        <div class="blueprint-base"></div>
+        <div class="blueprint-reveal"></div>
+        <div class="scan-line"></div>
+      </div>
     </div>
 
-    <main class="relative overflow-x-hidden">
-      <section class="slide" data-theme="dark"><img src="public/diapo/eeea412d-01.png" alt="Diapositive 1" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-02.png" alt="Diapositive 2" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-03.png" alt="Diapositive 3" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-04.png" alt="Diapositive 4" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-05.png" alt="Diapositive 5" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-06.png" alt="Diapositive 6" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-07.png" alt="Diapositive 7" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-08.png" alt="Diapositive 8" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-09.png" alt="Diapositive 9" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-10.png" alt="Diapositive 10" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-11.png" alt="Diapositive 11" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-12.png" alt="Diapositive 12" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-13.png" alt="Diapositive 13" /></section>
-      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-14.png" alt="Diapositive 14" /></section>
-      <section class="slide" data-theme="dark"><img src="public/diapo/eeea412d-15.png" alt="Diapositive 15" /></section>
-    </main>
-
     <script>
+      const stage = document.getElementById("stage");
       const progressBar = document.getElementById("progressBar");
-      const slides = Array.from(document.querySelectorAll("main > section"));
+      const slideCounter = document.getElementById("slideCounter");
+      const fxOverlay = document.getElementById("fxOverlay");
+      const dataRain = document.getElementById("dataRain");
+      const waveA = document.getElementById("waveA");
+      const waveB = document.getElementById("waveB");
 
-      function getCurrentSlideIndex() {
-        const probe = window.innerHeight * 0.45;
-        const foundIndex = slides.findIndex((slide) => {
-          const rect = slide.getBoundingClientRect();
-          return rect.top <= probe && rect.bottom > probe;
+      const TRANSITION_DURATION = 1420;
+      const SWAP_POINT_MS = 710;
+
+      const slidesConfig = Array.from({ length: 15 }, (_, index) => {
+        const number = String(index + 1).padStart(2, "0");
+        return {
+          src: `public/diapo/36abfcbf-${number}.png`,
+          theme: index === 0 || index === 14 ? "dark" : "light",
+        };
+      });
+
+      const slides = [];
+
+      let currentIndex = 0;
+      let pendingIndex = 0;
+      let transitionState = "idle";
+      let wheelAccumulator = 0;
+      let waveAnimationHandle = null;
+      let waveRunning = false;
+      let transitionSafetyTimer = null;
+
+      const transitionEffectByEdge = {
+        "0-1": "tunnel",
+        "1-2": "blueprint",
+        "2-3": "water",
+        "3-4": "blueprint",
+        "4-5": "tunnel",
+        "5-6": "blueprint",
+        "6-7": "water",
+        "7-8": "blueprint",
+        "8-9": "tunnel",
+        "9-10": "blueprint",
+        "10-11": "water",
+        "11-12": "blueprint",
+        "12-13": "tunnel",
+        "13-14": "water",
+      };
+
+      function buildSlides() {
+        const fragment = document.createDocumentFragment();
+
+        slidesConfig.forEach((item, index) => {
+          const section = document.createElement("section");
+          section.className = "slide";
+          section.dataset.theme = item.theme;
+
+          const image = document.createElement("img");
+          image.src = item.src;
+          image.alt = `Diapositive ${index + 1}`;
+
+          section.appendChild(image);
+          fragment.appendChild(section);
+          slides.push(section);
         });
-        return foundIndex === -1 ? 0 : foundIndex;
+
+        stage.appendChild(fragment);
       }
 
-      function goToSlide(index) {
-        const bounded = Math.max(0, Math.min(index, slides.length - 1));
-        slides[bounded].scrollIntoView({ behavior: "smooth", block: "start" });
+      function buildDataRain() {
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < 54; i += 1) {
+          const bit = document.createElement("span");
+          bit.textContent = Math.random() > 0.5 ? "1" : "0";
+          bit.style.setProperty("--x", (2 + (i * 97) % 96).toString());
+          bit.style.setProperty("--size", (10 + (i % 8)).toString());
+          bit.style.setProperty("--delay", (i * 24).toString());
+          fragment.appendChild(bit);
+        }
+
+        dataRain.appendChild(fragment);
       }
 
-      function moveSlide(step) {
-        goToSlide(getCurrentSlideIndex() + step);
+      function getWavePath(phase, amplitude, baseY, frequency) {
+        const points = [];
+        for (let x = 0; x <= 1000; x += 8) {
+          const t = (x / 1000) * Math.PI * 2 * frequency;
+          const y =
+            baseY +
+            Math.sin(t + phase) * amplitude +
+            Math.sin(t * 2.4 + phase * 0.9) * (amplitude * 0.42) +
+            Math.cos(t * 0.75 + phase * 1.25) * (amplitude * 0.24) +
+            Math.sin(t * 4.2 + phase * 0.35) * (amplitude * 0.12);
+          points.push(`${x},${y.toFixed(2)}`);
+        }
+
+        return `M ${points.join(" L ")} L 1000 220 L 0 220 Z`;
       }
 
-      function applyUiThemeFromSlide(index) {
-        const slide = slides[index];
-        if (!slide) {
+      function animateWaves(timestamp) {
+        if (!waveRunning) {
           return;
         }
 
-        const theme = slide.dataset.theme === "light" ? "light" : "dark";
+        const phase = timestamp * 0.00105;
+        waveA.setAttribute("d", getWavePath(phase, 24, 98, 1.18));
+        waveB.setAttribute("d", getWavePath(phase + 1.7, 34, 114, 0.78));
+
+        waveAnimationHandle = requestAnimationFrame(animateWaves);
+      }
+
+      function startWaveAnimation() {
+        if (waveRunning) {
+          return;
+        }
+        waveRunning = true;
+        waveAnimationHandle = requestAnimationFrame(animateWaves);
+      }
+
+      function stopWaveAnimation() {
+        waveRunning = false;
+        if (waveAnimationHandle) {
+          cancelAnimationFrame(waveAnimationHandle);
+          waveAnimationHandle = null;
+        }
+      }
+
+      function applyTheme(index) {
+        const theme = slidesConfig[index].theme;
         document.body.classList.toggle("theme-light", theme === "light");
         document.body.classList.toggle("theme-dark", theme === "dark");
       }
 
-      function updateReadingProgress() {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        progressBar.style.width = `${Math.min(progress, 100)}%`;
+      function updateCounter(index) {
+        slideCounter.textContent = `${index + 1}/${slides.length}`;
       }
 
-      function updateViewportState() {
-        updateReadingProgress();
-        applyUiThemeFromSlide(getCurrentSlideIndex());
+      function updateProgress(index) {
+        const ratio = slides.length > 1 ? index / (slides.length - 1) : 0;
+        progressBar.style.width = `${Math.max(0, Math.min(ratio * 100, 100))}%`;
       }
 
-      updateViewportState();
-      window.addEventListener("scroll", updateViewportState, { passive: true });
-      window.addEventListener("resize", updateViewportState);
+      function normalizeSlideVisibility() {
+        slides.forEach((slide, slideIndex) => {
+          const shouldShow =
+            slideIndex === currentIndex ||
+            slide.classList.contains("transition-out") ||
+            slide.classList.contains("transition-in");
+          slide.style.display = shouldShow ? "flex" : "none";
+        });
+      }
 
-      document.addEventListener("keydown", (event) => {
-        if (event.code !== "Space") {
+      function showSlide(index) {
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("active", slideIndex === index);
+          slide.classList.remove("transition-out", "transition-in");
+        });
+
+        normalizeSlideVisibility();
+
+        applyTheme(index);
+        updateCounter(index);
+        updateProgress(index);
+      }
+
+      function getTargetIndex(step) {
+        const target = currentIndex + step;
+        return Math.max(0, Math.min(target, slides.length - 1));
+      }
+
+      function clearEffectClasses() {
+        fxOverlay.classList.remove("effect-water", "effect-tunnel", "effect-blueprint", "transitioning");
+        void fxOverlay.offsetHeight;
+      }
+
+      function getTransitionEffect(fromIndex, toIndex) {
+        const edgeKey = `${Math.min(fromIndex, toIndex)}-${Math.max(fromIndex, toIndex)}`;
+        return transitionEffectByEdge[edgeKey] || "blueprint";
+      }
+
+      function finalizeTransition() {
+        transitionState = "idle";
+        clearEffectClasses();
+        stopWaveAnimation();
+
+        if (transitionSafetyTimer) {
+          clearTimeout(transitionSafetyTimer);
+          transitionSafetyTimer = null;
+        }
+
+        slides.forEach((slide) => {
+          slide.classList.remove("transition-out", "transition-in");
+        });
+
+        normalizeSlideVisibility();
+      }
+
+      function runTransition(step) {
+        if (transitionState !== "idle") {
           return;
         }
 
-        event.preventDefault();
-        moveSlide(event.shiftKey ? -1 : 1);
+        const targetIndex = getTargetIndex(step);
+        if (targetIndex === currentIndex) {
+          return;
+        }
+
+        pendingIndex = targetIndex;
+        transitionState = "running";
+        const effect = getTransitionEffect(currentIndex, targetIndex);
+
+        const outgoing = slides[currentIndex];
+        outgoing.classList.remove("transition-in");
+        outgoing.classList.add("transition-out");
+        normalizeSlideVisibility();
+
+        clearEffectClasses();
+        fxOverlay.classList.add(`effect-${effect}`);
+        void fxOverlay.offsetWidth;
+        fxOverlay.classList.add("transitioning");
+
+        if (transitionSafetyTimer) {
+          clearTimeout(transitionSafetyTimer);
+        }
+        transitionSafetyTimer = setTimeout(finalizeTransition, TRANSITION_DURATION + 180);
+
+        if (effect === "water") {
+          startWaveAnimation();
+        } else {
+          stopWaveAnimation();
+        }
+
+        window.setTimeout(() => {
+          currentIndex = pendingIndex;
+          slides.forEach((slide, index) => {
+            slide.classList.toggle("active", index === currentIndex);
+          });
+
+          const incoming = slides[currentIndex];
+          incoming.classList.remove("transition-out");
+          incoming.classList.add("transition-in");
+          normalizeSlideVisibility();
+
+          applyTheme(currentIndex);
+          updateCounter(currentIndex);
+          updateProgress(currentIndex);
+        }, SWAP_POINT_MS);
+      }
+
+      function move(step) {
+        runTransition(step);
+      }
+
+      fxOverlay.addEventListener("animationend", (event) => {
+        if (event.animationName !== "waterOverlayCycle" && event.animationName !== "tunnelOverlayCycle" && event.animationName !== "blueprintOverlayCycle") {
+          return;
+        }
+
+        finalizeTransition();
       });
 
-      document.addEventListener("click", () => {
-        moveSlide(1);
+      document.addEventListener("keydown", (event) => {
+        if (event.code === "Space" || event.code === "ArrowRight" || event.code === "ArrowDown" || event.code === "PageDown") {
+          event.preventDefault();
+          move(1);
+          return;
+        }
+
+        if (event.code === "ArrowLeft" || event.code === "ArrowUp" || event.code === "PageUp") {
+          event.preventDefault();
+          move(-1);
+        }
       });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("a, button, input, textarea, select, label")) {
+          return;
+        }
+
+        move(1);
+      });
+
+      document.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault();
+
+          if (transitionState !== "idle") {
+            return;
+          }
+
+          wheelAccumulator += event.deltaY;
+          if (Math.abs(wheelAccumulator) < 42) {
+            return;
+          }
+
+          move(wheelAccumulator > 0 ? 1 : -1);
+          wheelAccumulator = 0;
+        },
+        { passive: false }
+      );
+
+      buildSlides();
+      buildDataRain();
+      showSlide(currentIndex);
     </script>
   </body>
 </html>
