@@ -1,49 +1,71 @@
 # 🛡️ Soutenance de Stage - GANIL 2026
 
-> **Sujet :** Modernisation de la télémaintenance sécurisée (Migration VNC vers MeshCentral).
+> **Sujet :** Modernisation de la télémaintenance sécurisée (migration VNC vers MeshCentral)  
 > **Auteur :** Romain QUONIAM (Service G2I)
 
-## 📋 À propos du projet
+## 📋 Présentation
 
-Ce dépôt contient le code source de ma soutenance orale.
-Plutôt qu'un diaporama statique (PowerPoint), j'ai développé une **expérience web interactive** (Scrollytelling).
+Ce dépôt contient une soutenance au format **scrollytelling web** :
 
-### 🚀 Pourquoi ce choix technique ?
+- progression slide par slide,
+- transitions visuelles immersives,
+- barre de progression + compteur,
+- navigation rapide via **fil d’Ariane**.
 
-Ce format reflète les compétences acquises durant le stage et la nature du projet **MeshCentral** :
+L’application est volontairement simple : un seul fichier principal (`index.html`) et des assets d’images dans `public/diapo/`.
 
-1. **Web-First :** Tout comme MeshCentral (Node.js), cette présentation vit dans le navigateur.
-2. **Fluidité :** Le format "Scroll" permet de raconter l'histoire de la migration sans interruption.
-3. **Légèreté :** Aucune installation lourde requise, technologies standards (HTML5 / TailwindCSS).
+## 🧱 Stack réelle du projet
 
-## 🛠️ Stack Technique
+- **Structure/UI :** HTML5 + CSS natif (sans framework)
+- **Logique :** JavaScript vanilla
+- **Serveur local :** `serve` (Node.js) ou serveur Python
 
-* **Structure :** HTML5 Sémantique
-* **Design :** [TailwindCSS](https://tailwindcss.com/) (CDN)
-* **Animations :** [AOS](https://michalsnik.github.io/aos/) (Animate On Scroll)
-* **Diagrammes :** [Mermaid.js](https://mermaid.js.org/) (Architecture as Code)
+## 🧭 Fil d’Ariane (Breadcrumb)
 
-## 📦 Comment lancer la présentation ?
+Le fil d’Ariane est affiché en bandeau horizontal compact sous la barre de progression.
 
-Le projet ne nécessite aucune compilation complexe.
+- **Actif :** cyan (`#00F0FF`) + gras
+- **Inactif :** gris visible (présence légère)
+- **Comportement :** mise à jour automatique au changement de slide + navigation cliquable
 
-1. **Cloner le dépôt :**
+### Mapping des sections
 
-   ```bash
-   git clone [https://github.com/ton-pseudo/ganil-meshcentral-defense.git](https://github.com/ton-pseudo/ganil-meshcentral-defense.git)
-   ```
+- **INTRO** : slide 1
+- **ENVIRONNEMENT** : slides 2 à 5
+- **ANALYSE** : slides 6 à 7
+- **SOLUTION** : slides 8 à 9
+- **RÉALISATION** : slides 10 à 12
+- **QUOTIDIEN** : slide 13
+- **BILAN** : slides 14 à 15
 
-2. **Lancer un serveur local :**
+## ▶️ Lancer la présentation
 
-   ```bash
-   # Avec Python
-   python3 -m http.server 3000
+### Option 1 — Node.js
 
-   # OU avec Node.js (npx)
-   npx serve
-   ```
+```bash
+npm install
+npx serve .
+```
 
-3. **Ouvrir le navigateur :** `http://localhost:3000`
+### Option 2 — Python
+
+```bash
+python3 -m http.server 3000
+```
+
+Puis ouvrir dans le navigateur :
+
+- si `serve` : URL affichée dans le terminal (souvent `http://localhost:3000`)
+- si Python : `http://localhost:3000`
+
+## 📁 Arborescence minimale
+
+```text
+index.html
+public/
+  diapo/
+README.md
+```
 
 ---
-Développé sur GitHub Codespaces - 2026.
+Développé sur GitHub Codespaces — 2026.
