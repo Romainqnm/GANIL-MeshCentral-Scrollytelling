@@ -3,22 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soutenance GANIL - MeshCentral</title>
+    <title>Soutenance GANIL - Diapositives</title>
     <meta
       name="description"
-      content="Scrollytelling de soutenance : télémaintenance sécurisée MeshCentral au GANIL."
+      content="Diapositives de soutenance GANIL affichées en scrollytelling image par image."
     />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/aos@2.3.4/dist/aos.css"
     />
 
     <script>
@@ -29,13 +25,9 @@
               sans: ["Inter", "sans-serif"],
             },
             colors: {
-              slateNight: "#070e1d",
-              slateDeep: "#0f172a",
-              electric: "#1d4ed8",
-              neon: "#22c55e",
-            },
-            boxShadow: {
-              glass: "0 8px 32px rgba(0,0,0,0.35)",
+              slateNight: "#060b16",
+              slateDeep: "#0b1220",
+              electric: "#3b82f6",
             },
           },
         },
@@ -45,462 +37,150 @@
     <style>
       html {
         scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
       }
 
       body {
-        background: radial-gradient(circle at 20% 10%, #1e293b 0%, #0f172a 38%, #070e1d 100%);
+        min-height: 100vh;
+        margin: 0;
+        line-height: 1.5;
+        transition: background 260ms ease, color 260ms ease;
       }
 
-      .glass {
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(14px);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      body.theme-dark {
+        background: radial-gradient(circle at 20% 0%, #1e293b 0%, #0b1220 42%, #060b16 100%);
+        color: #e2e8f0;
       }
 
-      .scanline {
-        background-image: linear-gradient(
-          to bottom,
-          rgba(148, 163, 184, 0.06) 1px,
-          transparent 1px
-        );
-        background-size: 100% 3px;
+      body.theme-light {
+        background: radial-gradient(circle at 50% -10%, #ffffff 0%, #eef2f7 52%, #dde5ef 100%);
+        color: #0f172a;
       }
 
-      .hero-bg::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 80% 20%, rgba(29, 78, 216, 0.22), transparent 38%),
-          radial-gradient(circle at 10% 70%, rgba(34, 197, 94, 0.18), transparent 35%);
-        z-index: 0;
+      main {
+        padding: 0.6rem;
       }
 
-      .section-bg {
-        position: absolute;
-        inset: 0;
+      .slide {
+        position: relative;
+        height: calc(100vh - 1.2rem);
+        min-height: calc(100vh - 1.2rem);
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        margin-bottom: 0.6rem;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(15, 23, 42, 0.75);
+        box-shadow: 0 24px 50px rgba(2, 6, 23, 0.55);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(0.2rem, 0.9vw, 0.65rem);
+        transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+      }
+
+      .slide[data-theme="light"] {
+        background: linear-gradient(135deg, #f8fafc 0%, #eff4f9 100%);
+        border-color: rgba(148, 163, 184, 0.35);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+      }
+
+      .slide[data-theme="dark"] {
+        background: rgba(15, 23, 42, 0.75);
+        border-color: rgba(148, 163, 184, 0.22);
+      }
+
+      .slide:last-child {
+        margin-bottom: 0;
+      }
+
+      .slide img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        opacity: 0.2;
+        object-fit: contain;
+        background: #020617;
+        border-radius: 0.9rem;
+      }
+
+      .slide[data-theme="light"] img {
+        background: #ffffff;
+      }
+
+      .slide[data-theme="dark"] img {
+        background: #020617;
+      }
+
+      #progressTrack {
+        background: rgba(15, 23, 42, 0.45);
+        transition: background 220ms ease;
+      }
+
+      body.theme-light #progressTrack {
+        background: rgba(148, 163, 184, 0.35);
+      }
+
+      #progressBar {
+        background: linear-gradient(90deg, #3b82f6, #22d3ee);
       }
     </style>
   </head>
 
-  <body class="text-slate-100 font-sans antialiased selection:bg-electric/50">
-    <div class="fixed top-0 left-0 z-50 h-1.5 w-full bg-slate-900/50">
-      <div
-        id="progressBar"
-        class="h-full w-0 bg-gradient-to-r from-electric to-neon transition-[width] duration-150"
-      ></div>
+  <body class="theme-dark font-sans antialiased">
+    <div id="progressTrack" class="fixed top-0 left-0 z-50 h-1.5 w-full">
+      <div id="progressBar" class="h-full w-0 transition-[width] duration-150"></div>
     </div>
 
     <main class="relative overflow-x-hidden">
-      <section class="hero-bg relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <img
-          src="public/visual/Spectrometre AGATA.jpg"
-          alt="Infrastructure GANIL"
-          class="section-bg"
-          onerror="this.src='https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=1600&q=80'"
-        />
-        <div class="absolute inset-0 bg-slateNight/70"></div>
-        <div class="relative z-10 mx-auto w-full max-w-6xl">
-          <div class="glass scanline rounded-3xl p-8 lg:p-12">
-            <p
-              class="text-sm md:text-base uppercase tracking-[0.35em] text-electric/90"
-              data-aos="fade-right"
-            >
-              Soutenance de stage 2026
-            </p>
-            <h1
-              class="mt-4 text-3xl md:text-5xl lg:text-6xl font-black leading-tight"
-              data-aos="fade-up"
-              data-aos-delay="120"
-            >
-              Mise en œuvre d'une solution de télémaintenance sécurisée (MeshCentral) et support utilisateur
-            </h1>
-            <p
-              class="mt-6 text-lg md:text-xl text-slate-200"
-              data-aos="fade-up"
-              data-aos-delay="240"
-            >
-              Rapport de stage - Administrateur systèmes et réseaux
-            </p>
-
-            <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3 text-sm md:text-base">
-              <div class="glass rounded-xl p-4" data-aos="fade-up" data-aos-delay="300">
-                <p class="text-neon font-semibold">Lieu</p>
-                <p>GANIL (Grand Accélérateur National d'Ions Lourds), Caen</p>
-              </div>
-              <div class="glass rounded-xl p-4" data-aos="fade-up" data-aos-delay="380">
-                <p class="text-neon font-semibold">Auteur</p>
-                <p>Romain QUONIAM</p>
-              </div>
-              <div class="glass rounded-xl p-4" data-aos="fade-up" data-aos-delay="460">
-                <p class="text-neon font-semibold">Encadrement</p>
-                <p>Tuteur : Guillaume LALAIRE<br />Professeur référent : Hervé GUIMBRETIERE</p>
-              </div>
-              <div class="glass rounded-xl p-4 md:col-span-2 xl:col-span-3" data-aos="fade-up" data-aos-delay="520">
-                <p class="text-neon font-semibold">Période</p>
-                <p>5 janvier – 20 février 2026</p>
-              </div>
-            </div>
-
-            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 items-center" data-aos="zoom-in" data-aos-delay="620">
-              <img src="public/logo/LogoGANIL.png" alt="Logo GANIL" class="h-14 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80'" />
-              <img src="public/logo/LOGO_CNRS_2019_RVB-Web.png" alt="Logo CNRS" class="h-14 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80'" />
-              <img src="public/logo/action_image_1637595939015.png" alt="Logo CEA" class="h-14 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=400&q=80'" />
-              <img src="public/logo/logo-CaenSup-noir.svg" alt="Logo Caensup" class="h-14 object-contain bg-white/80 rounded-lg p-2 mx-auto" onerror="this.src='https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80'" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <img
-          src="public/visual/GANIL_Le Tunnel_Yannig Van De Wouwer.jpg"
-          alt="Tunnel GANIL"
-          class="section-bg"
-          onerror="this.src='https://images.unsplash.com/photo-1545987796-200677ee1011?auto=format&fit=crop&w=1600&q=80'"
-        />
-        <div class="absolute inset-0 bg-slateNight/75"></div>
-        <div class="relative z-10 mx-auto w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 1</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Le GANIL : Grand Accélérateur National d'Ions Lourds</h2>
-            <ul class="mt-6 space-y-4 text-slate-200 leading-relaxed">
-              <li data-aos="fade-up" data-aos-delay="100"><span class="text-neon font-semibold">Nature :</span> infrastructure Étoile, sous tutelle commune du CEA et du CNRS.</li>
-              <li data-aos="fade-up" data-aos-delay="200"><span class="text-neon font-semibold">Mission :</span> production et accélération de faisceaux d'ions (du Carbone à l'Uranium), avec plus de 350 personnels permanents autour de SPIRAL 1 et SPIRAL 2.</li>
-              <li data-aos="fade-up" data-aos-delay="300"><span class="text-neon font-semibold">Domaines :</span> physique nucléaire, radiobiologie, matériaux, spatial.</li>
-              <li data-aos="fade-up" data-aos-delay="400"><span class="text-neon font-semibold">Rayonnement :</span> 600 à 800 chercheurs internationaux accueillis chaque année.</li>
-            </ul>
-          </div>
-          <div class="glass rounded-3xl p-5" data-aos="zoom-in" data-aos-delay="250">
-            <img
-              src="public/visual/Spectrometre AGATA.jpg"
-              alt="Infrastructure majeure du GANIL"
-              class="rounded-2xl w-full h-[420px] object-cover"
-              onerror="this.src='https://images.unsplash.com/photo-1564325724739-bae0bd08762c?auto=format&fit=crop&w=1200&q=80'"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl">
-          <div class="glass rounded-3xl p-8 lg:p-10">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm" data-aos="fade-right">Diapositive 2</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2" data-aos="fade-up">Organisation du GANIL (Les Divisions)</h2>
-            <div class="mt-10 grid lg:grid-cols-5 gap-6 items-center">
-              <div class="glass rounded-2xl p-5 text-center lg:col-span-1" data-aos="zoom-in" data-aos-delay="120">
-                <p class="uppercase text-xs tracking-widest text-neon">Centre</p>
-                <h3 class="mt-2 text-xl font-bold">Direction GANIL</h3>
-              </div>
-              <div class="lg:col-span-4 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                <div class="glass rounded-2xl p-5 text-center" data-aos="fade-up" data-aos-delay="220">Division Physique</div>
-                <div class="glass rounded-2xl p-5 text-center" data-aos="fade-up" data-aos-delay="320">Division Opérations et développement</div>
-                <div class="glass rounded-2xl p-5 text-center" data-aos="fade-up" data-aos-delay="420">Division Soutien Technique & Administratif</div>
-                <div class="glass rounded-2xl p-5 text-center" data-aos="fade-up" data-aos-delay="520">Division Qualité & Sécurité Nucléaire</div>
-              </div>
-            </div>
-            <div class="mt-6 h-px bg-gradient-to-r from-transparent via-electric/70 to-transparent"></div>
-            <p class="mt-4 text-slate-300" data-aos="fade-up" data-aos-delay="620">Schéma horizontal orienté lisibilité : 4 divisions connectées à la direction pour refléter une coordination transversale plutôt qu'une hiérarchie opaque.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-6xl grid lg:grid-cols-2 gap-8">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 3</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Le G2I au cœur du système</h2>
-            <p class="mt-5 text-slate-200 leading-relaxed">Le G2I (Groupe Infrastructure Informatique) est le garant du transport de l'information et un support privilégié/expert pour l'ensemble des métiers GANIL.</p>
-            <div class="mt-6 grid sm:grid-cols-2 gap-4 text-center">
-              <div class="glass rounded-xl p-4" data-aos="zoom-in" data-aos-delay="120">Concevoir</div>
-              <div class="glass rounded-xl p-4" data-aos="zoom-in" data-aos-delay="220">Déployer</div>
-              <div class="glass rounded-xl p-4" data-aos="zoom-in" data-aos-delay="320">Maintenir</div>
-              <div class="glass rounded-xl p-4" data-aos="zoom-in" data-aos-delay="420">Sécuriser</div>
-            </div>
-            <ul class="mt-6 space-y-2 text-slate-300">
-              <li data-aos="fade-up" data-aos-delay="520">Accompagnement du cycle de vie des infrastructures.</li>
-              <li data-aos="fade-up" data-aos-delay="620">Garantie de performance et continuité des services.</li>
-            </ul>
-          </div>
-          <div class="glass rounded-3xl p-5" data-aos="zoom-in" data-aos-delay="200">
-            <img
-              src="public/visual/GANIL_Le Tunnel_Yannig Van De Wouwer.jpg"
-              alt="Réseaux et infrastructure"
-              class="rounded-2xl w-full h-full min-h-[420px] object-cover"
-              onerror="this.src='https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=1200&q=80'"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl">
-          <div class="glass rounded-3xl p-8 lg:p-10">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm" data-aos="fade-right">Diapositive 4</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2" data-aos="fade-up">Une Infrastructure Hétérogène</h2>
-            <p class="mt-3 text-slate-300" data-aos="fade-up" data-aos-delay="120">Machines récentes et anciennes coexistent : le réseau GANIL s'apparente à une ville connectée.</p>
-            <div class="mt-8 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="160">
-                <h3 class="font-bold text-neon">+800 postes clients</h3>
-                <p class="mt-2 text-sm text-slate-300">Windows bureautique, stations Linux scientifiques, contrôle-commande, stations DAO/CAO.</p>
-              </article>
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="240">
-                <h3 class="font-bold text-neon">~150 serveurs</h3>
-                <p class="mt-2 text-sm text-slate-300">Applications métiers, calcul scientifique, stockage massif &gt; 1 Po, services DHCP/DNS/AD.</p>
-              </article>
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="320">
-                <h3 class="font-bold text-neon">Réseau étendu</h3>
-                <p class="mt-2 text-sm text-slate-300">150 switchs et 80 bornes Wi-Fi, y compris en environnements industriels contraints.</p>
-              </article>
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="400">
-                <h3 class="font-bold text-neon">Téléphonie IP</h3>
-                <p class="mt-2 text-sm text-slate-300">200 postes, QoS indispensable pour préserver la qualité voix sur le réseau RJ45.</p>
-              </article>
-              <article class="glass rounded-2xl p-5 md:col-span-2" data-aos="fade-up" data-aos-delay="500">
-                <h3 class="font-bold text-neon">+3500 adresses IP</h3>
-                <p class="mt-2 text-sm text-slate-300">Automates, capteurs, imprimantes, caméras, contrôle d'accès : bien au-delà d'un parc bureautique classique.</p>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl grid lg:grid-cols-2 gap-8 items-stretch">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 5</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Projet MeshCentral : Phase 1 - Étude & Recherche</h2>
-            <ul class="mt-6 space-y-4 text-slate-200 leading-relaxed">
-              <li data-aos="fade-up" data-aos-delay="120"><span class="text-neon font-semibold">Collaborateurs :</span> définition des besoins avec Guillaume LALAIRE.</li>
-              <li data-aos="fade-up" data-aos-delay="220"><span class="text-neon font-semibold">Existant :</span> limites VNC sur sécurité, ports entrants et gestion décentralisée.</li>
-              <li data-aos="fade-up" data-aos-delay="320"><span class="text-neon font-semibold">Objectif :</span> solution MeshCentral centralisée, chiffrée et pilotable par politique.</li>
-              <li data-aos="fade-up" data-aos-delay="420"><span class="text-neon font-semibold">Conception :</span> schémas d'architecture et notes théoriques validés avant déploiement.</li>
-            </ul>
-          </div>
-          <div class="glass rounded-3xl p-6" data-aos="zoom-in" data-aos-delay="220">
-            <h3 class="text-xl font-bold">Comparatif initial</h3>
-            <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <div class="rounded-xl bg-red-500/10 border border-red-400/30 p-4">
-                <p class="font-semibold text-red-200">VNC (actuel)</p>
-                <ul class="mt-2 space-y-1 text-slate-300">
-                  <li>Ports entrants ouverts</li>
-                  <li>Gestion dispersée</li>
-                  <li>Secrets peu maîtrisés</li>
-                </ul>
-              </div>
-              <div class="rounded-xl bg-neon/10 border border-neon/30 p-4">
-                <p class="font-semibold text-neon">MeshCentral (cible)</p>
-                <ul class="mt-2 space-y-1 text-slate-200">
-                  <li>Centralisation web</li>
-                  <li>TLS & traçabilité</li>
-                  <li>Administration unifiée</li>
-                </ul>
-              </div>
-            </div>
-            <img src="public/Screenshots/MeshCentral1.png" alt="Schéma MeshCentral" class="mt-4 w-full rounded-xl border border-slate-500/30" onerror="this.src='https://images.unsplash.com/photo-1451187863213-d1bcbaae3fa3?auto=format&fit=crop&w=1200&q=80'" />
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl">
-          <div class="glass rounded-3xl p-8 lg:p-10">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm" data-aos="fade-right">Slide Intermédiaire</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2" data-aos="fade-up">Architecture Technique : Un Trio Complémentaire</h2>
-
-            <div class="mt-8 grid lg:grid-cols-3 gap-6 items-center">
-              <div class="glass rounded-2xl p-6 text-center" data-aos="zoom-in" data-aos-delay="120">
-                <img src="public/logo/Nginx.jpg" alt="Nginx" class="h-16 mx-auto object-contain" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=400&q=80'" />
-                <h3 class="mt-3 font-bold">Nginx (Le Bouclier)</h3>
-                <p class="mt-2 text-sm text-slate-300">Reverse proxy, terminaison TLS/HTTPS, protection frontale.</p>
-              </div>
-              <div class="glass rounded-2xl p-6 text-center" data-aos="zoom-in" data-aos-delay="240">
-                <img src="public/logo/logo-nodejs.png" alt="Node.js" class="h-16 mx-auto object-contain" onerror="this.src='https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=400&q=80'" />
-                <h3 class="mt-3 font-bold">Node.js (Le Moteur)</h3>
-                <p class="mt-2 text-sm text-slate-300">Traitement asynchrone des WebSockets pour la télémaintenance temps réel.</p>
-              </div>
-              <div class="glass rounded-2xl p-6 text-center" data-aos="zoom-in" data-aos-delay="360">
-                <img src="public/logo/Mongodb.png" alt="MongoDB" class="h-16 mx-auto object-contain" onerror="this.src='https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=400&q=80'" />
-                <h3 class="mt-3 font-bold">MongoDB (La Mémoire)</h3>
-                <p class="mt-2 text-sm text-slate-300">Stockage orienté documents JSON, flexible pour logs et inventaire.</p>
-              </div>
-            </div>
-
-            <div class="mt-8 flex items-center justify-center gap-4 text-sm text-slate-300" data-aos="fade-up" data-aos-delay="480">
-              <span class="glass rounded-full px-4 py-2">Nginx</span>
-              <span class="text-electric text-xl">→</span>
-              <span class="glass rounded-full px-4 py-2">Node.js</span>
-              <span class="text-electric text-xl">↔</span>
-              <span class="glass rounded-full px-4 py-2">MongoDB</span>
-            </div>
-
-            <p class="mt-6 text-slate-300" data-aos="fade-up" data-aos-delay="560">Choix justifié : disponibilité élevée, flexibilité du format JSON et adaptation aux contraintes de flux en temps réel.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl grid lg:grid-cols-2 gap-8 items-stretch">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 6</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Phase 2 : Implémentation en Environnement "Offline"</h2>
-            <ul class="mt-6 space-y-4 text-slate-200">
-              <li data-aos="fade-up" data-aos-delay="120"><span class="text-neon font-semibold">Contrainte majeure :</span> VM isolée sans accès Internet (pas de apt install / npm install direct).</li>
-              <li data-aos="fade-up" data-aos-delay="220"><span class="text-neon font-semibold">Méthode pont :</span> reconstruction des dépendances via transferts SFTP avec MobaXterm.</li>
-              <li data-aos="fade-up" data-aos-delay="320"><span class="text-neon font-semibold">Sécurisation :</span> reverse proxy Nginx pour imposer TLS.</li>
-              <li data-aos="fade-up" data-aos-delay="420"><span class="text-neon font-semibold">Architecture :</span> unification des flux sur le port 443 pour simplifier le firewall.</li>
-              <li data-aos="fade-up" data-aos-delay="520"><span class="text-neon font-semibold">Design :</span> comparaison du thème MeshCentral de base et d'une version modernisée GANIL.</li>
-            </ul>
-          </div>
-          <div class="grid gap-4">
-            <div class="glass rounded-2xl p-4" data-aos="zoom-in" data-aos-delay="200">
-              <div class="grid grid-cols-3 gap-3 items-center">
-                <img src="public/logo/mobaxterm.svg" alt="MobaXterm" class="h-12 object-contain" onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=200&q=80'" />
-                <img src="public/logo/proxmox-logo-stacked-color-1.png" alt="Proxmox" class="h-12 object-contain" onerror="this.src='https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=200&q=80'" />
-                <img src="public/logo/images.png" alt="Debian" class="h-12 object-contain" onerror="this.src='https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=200&q=80'" />
-              </div>
-            </div>
-            <img src="public/Screenshots/MeshCentral Arch v2.6.png" alt="Architecture MeshCentral v2.6" class="glass rounded-2xl p-3 border border-slate-500/30" data-aos="fade-up" data-aos-delay="320" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80'" />
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl grid lg:grid-cols-2 gap-8">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 7</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">MeshCentral : Une Gestion de Parc Unifiée et Web</h2>
-            <ul class="mt-6 space-y-3 text-slate-200 leading-relaxed">
-              <li data-aos="fade-up" data-aos-delay="120"><span class="text-neon font-semibold">Accès universel :</span> prise en main distante via navigateur (KVM/Bureau).</li>
-              <li data-aos="fade-up" data-aos-delay="220"><span class="text-neon font-semibold">Multi-plateforme :</span> Windows, Linux, Mac, Android.</li>
-              <li data-aos="fade-up" data-aos-delay="320"><span class="text-neon font-semibold">Terminal web :</span> commandes SSH/PowerShell centralisées.</li>
-              <li data-aos="fade-up" data-aos-delay="420"><span class="text-neon font-semibold">Transfert fichiers :</span> upload/download sécurisé intégré.</li>
-              <li data-aos="fade-up" data-aos-delay="520"><span class="text-neon font-semibold">Intel AMT :</span> fonctionnalité puissante, à activer avec grande prudence.</li>
-              <li data-aos="fade-up" data-aos-delay="620"><span class="text-neon font-semibold">Sécurité & consentement :</span> notification utilisateur et traçabilité (RGPD).</li>
-            </ul>
-          </div>
-          <div class="grid gap-4">
-            <img src="public/Screenshots/MeshCentral2.png" alt="Profil admin MeshCentral" class="glass rounded-2xl p-3 border border-slate-500/30" data-aos="zoom-in" data-aos-delay="220" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80'" />
-            <div class="glass rounded-2xl p-4 grid grid-cols-2 gap-3" data-aos="fade-up" data-aos-delay="340">
-              <img src="public/logo/Mongodb.png" alt="MongoDB" class="h-12 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=300&q=80'" />
-              <img src="public/logo/Nginx.jpg" alt="Nginx" class="h-12 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=300&q=80'" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-6xl">
-          <div class="glass rounded-3xl p-8 lg:p-10">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm" data-aos="fade-right">Diapositive 8</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2" data-aos="fade-up">Les Tâches Parallèles : La Vie de Service</h2>
-            <div class="mt-8 grid md:grid-cols-3 gap-5">
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="120">
-                <h3 class="font-bold text-neon">Gestion des tickets (GLPI)</h3>
-                <p class="mt-2 text-sm text-slate-300">Prise en charge des incidents impression, réseau et logiciels.</p>
-              </article>
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="220">
-                <h3 class="font-bold text-neon">Préparation de postes</h3>
-                <p class="mt-2 text-sm text-slate-300">Remise à neuf d'un portable avec installation d'un Ubuntu vierge.</p>
-              </article>
-              <article class="glass rounded-2xl p-5" data-aos="fade-up" data-aos-delay="320">
-                <h3 class="font-bold text-neon">Socialisation</h3>
-                <p class="mt-2 text-sm text-slate-300">Intégration progressive à l'équipe, meilleure compréhension des usages terrain.</p>
-              </article>
-            </div>
-            <p class="mt-6 text-slate-200" data-aos="fade-up" data-aos-delay="420">Cette polyvalence a guidé une configuration MeshCentral orientée simplicité d'usage pour les utilisateurs finaux.</p>
-            <div class="mt-6" data-aos="zoom-in" data-aos-delay="520">
-              <img src="public/logo/images.png" alt="Logo GLPI" class="h-14 object-contain" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=300&q=80'" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl grid lg:grid-cols-2 gap-8">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 9</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Bilan de Compétences : De la Théorie à la Réalité Terrain</h2>
-            <ul class="mt-6 space-y-4 text-slate-200 leading-relaxed">
-              <li data-aos="fade-up" data-aos-delay="120"><span class="text-neon font-semibold">Changement de paradigme :</span> passage du laboratoire à la production critique (ZRR, disponibilité, sécurité).</li>
-              <li data-aos="fade-up" data-aos-delay="220"><span class="text-neon font-semibold">Hard skills :</span> Linux/Debian avancé, dépendances manuelles, hardening, maîtrise TLS et reverse proxy.</li>
-              <li data-aos="fade-up" data-aos-delay="320"><span class="text-neon font-semibold">Soft skills :</span> autonomie documentaire, communication, traçabilité, intégration d'équipe G2I.</li>
-            </ul>
-          </div>
-          <div class="glass rounded-3xl p-8" data-aos="zoom-in" data-aos-delay="220">
-            <div class="relative h-full min-h-[360px] flex items-center justify-center">
-              <div class="absolute w-60 h-60 rounded-full bg-electric/25 border border-electric/40 flex items-center justify-center text-center p-6">Formation académique<br /><span class="text-sm text-slate-300">Théorie · Linux · Réseau</span></div>
-              <div class="absolute translate-x-28 w-60 h-60 rounded-full bg-neon/20 border border-neon/40 flex items-center justify-center text-center p-6">Exigence GANIL<br /><span class="text-sm text-slate-300">Sécurité · ZRR · Équipe</span></div>
-              <div class="z-10 glass rounded-full px-5 py-3 text-center font-semibold border border-white/20">Compétences acquises<br /><span class="text-xs text-slate-300">Rigueur · Autonomie</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <div class="mx-auto w-full max-w-7xl grid lg:grid-cols-2 gap-8">
-          <div class="glass rounded-3xl p-8" data-aos="fade-right">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm">Diapositive 10</p>
-            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Bilan du PoC & Perspectives</h2>
-            <ul class="mt-6 space-y-4 text-slate-200">
-              <li data-aos="fade-up" data-aos-delay="120"><span class="text-neon font-semibold">Bilan technique :</span> architecture offline validée, chiffrement TLS opérationnel via Nginx.</li>
-              <li data-aos="fade-up" data-aos-delay="220"><span class="text-neon font-semibold">Point de vigilance :</span> Intel AMT et exposition Node.js restent des vecteurs à auditer avant production.</li>
-              <li data-aos="fade-up" data-aos-delay="320"><span class="text-neon font-semibold">Perspective :</span> déploiement agents via WSUS Package Publisher pour auditabilité et gestion de paquets.</li>
-            </ul>
-          </div>
-          <div class="glass rounded-3xl p-8" data-aos="zoom-in" data-aos-delay="220">
-            <h3 class="text-xl font-bold">Roadmap</h3>
-            <div class="mt-6 space-y-4">
-              <div class="flex items-center gap-4"><span class="w-3 h-3 rounded-full bg-neon"></span><p>Maquette : Fait</p></div>
-              <div class="flex items-center gap-4"><span class="w-3 h-3 rounded-full bg-yellow-300"></span><p>Audit sécurité : À revoir</p></div>
-              <div class="flex items-center gap-4"><span class="w-3 h-3 rounded-full bg-electric"></span><p>Production : À faire</p></div>
-            </div>
-            <div class="mt-8 h-2 rounded-full bg-slate-700 overflow-hidden">
-              <div class="h-full w-2/3 bg-gradient-to-r from-neon to-electric"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="relative min-h-screen flex items-center py-16 px-6 lg:px-12">
-        <img
-          src="public/visual/thanks.png"
-          alt="Site GANIL"
-          class="section-bg"
-          onerror="this.src='https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&w=1600&q=80'"
-        />
-        <div class="absolute inset-0 bg-slateNight/80"></div>
-        <div class="relative z-10 mx-auto w-full max-w-5xl text-center">
-          <div class="glass rounded-3xl p-10 lg:p-14">
-            <p class="text-electric uppercase tracking-[0.25em] text-sm" data-aos="fade-up">Diapositive 11</p>
-            <h2 class="text-4xl md:text-6xl font-black mt-3" data-aos="zoom-in" data-aos-delay="120">Merci</h2>
-            <p class="mt-5 text-lg text-slate-200" data-aos="fade-up" data-aos-delay="220">Merci à l'équipe G2I, à Guillaume LALAIRE, à l'ensemble du service pour l'accueil, et au GANIL pour l'opportunité.</p>
-            <p class="mt-4 text-xl text-neon font-semibold" data-aos="fade-up" data-aos-delay="320">Session de Questions / Réponses</p>
-            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 items-center" data-aos="fade-up" data-aos-delay="420">
-              <img src="public/logo/LogoGANIL.png" alt="GANIL" class="h-12 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=200&q=80'" />
-              <img src="public/logo/LOGO_CNRS_2019_RVB-Web.png" alt="CNRS" class="h-12 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=200&q=80'" />
-              <img src="public/logo/action_image_1637595939015.png" alt="CEA" class="h-12 object-contain mx-auto" onerror="this.src='https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=200&q=80'" />
-              <img src="public/logo/logo-CaenSup-noir.svg" alt="Caensup" class="h-12 object-contain bg-white/80 rounded-lg p-1 mx-auto" onerror="this.src='https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=200&q=80'" />
-            </div>
-          </div>
-        </div>
-      </section>
+      <section class="slide" data-theme="dark"><img src="public/diapo/eeea412d-01.png" alt="Diapositive 1" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-02.png" alt="Diapositive 2" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-03.png" alt="Diapositive 3" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-04.png" alt="Diapositive 4" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-05.png" alt="Diapositive 5" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-06.png" alt="Diapositive 6" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-07.png" alt="Diapositive 7" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-08.png" alt="Diapositive 8" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-09.png" alt="Diapositive 9" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-10.png" alt="Diapositive 10" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-11.png" alt="Diapositive 11" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-12.png" alt="Diapositive 12" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-13.png" alt="Diapositive 13" /></section>
+      <section class="slide" data-theme="light"><img src="public/diapo/eeea412d-14.png" alt="Diapositive 14" /></section>
+      <section class="slide" data-theme="dark"><img src="public/diapo/eeea412d-15.png" alt="Diapositive 15" /></section>
     </main>
 
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
-      AOS.init({
-        once: false,
-        mirror: true,
-        duration: 1000,
-        easing: "ease-out-cubic",
-      });
-
       const progressBar = document.getElementById("progressBar");
+      const slides = Array.from(document.querySelectorAll("main > section"));
+
+      function getCurrentSlideIndex() {
+        const probe = window.innerHeight * 0.45;
+        const foundIndex = slides.findIndex((slide) => {
+          const rect = slide.getBoundingClientRect();
+          return rect.top <= probe && rect.bottom > probe;
+        });
+        return foundIndex === -1 ? 0 : foundIndex;
+      }
+
+      function goToSlide(index) {
+        const bounded = Math.max(0, Math.min(index, slides.length - 1));
+        slides[bounded].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function moveSlide(step) {
+        goToSlide(getCurrentSlideIndex() + step);
+      }
+
+      function applyUiThemeFromSlide(index) {
+        const slide = slides[index];
+        if (!slide) {
+          return;
+        }
+
+        const theme = slide.dataset.theme === "light" ? "light" : "dark";
+        document.body.classList.toggle("theme-light", theme === "light");
+        document.body.classList.toggle("theme-dark", theme === "dark");
+      }
 
       function updateReadingProgress() {
         const scrollTop = window.scrollY;
@@ -509,9 +189,27 @@
         progressBar.style.width = `${Math.min(progress, 100)}%`;
       }
 
-      updateReadingProgress();
-      window.addEventListener("scroll", updateReadingProgress, { passive: true });
-      window.addEventListener("resize", updateReadingProgress);
+      function updateViewportState() {
+        updateReadingProgress();
+        applyUiThemeFromSlide(getCurrentSlideIndex());
+      }
+
+      updateViewportState();
+      window.addEventListener("scroll", updateViewportState, { passive: true });
+      window.addEventListener("resize", updateViewportState);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.code !== "Space") {
+          return;
+        }
+
+        event.preventDefault();
+        moveSlide(event.shiftKey ? -1 : 1);
+      });
+
+      document.addEventListener("click", () => {
+        moveSlide(1);
+      });
     </script>
   </body>
 </html>
