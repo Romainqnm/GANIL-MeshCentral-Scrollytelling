@@ -31,7 +31,7 @@ Le fil d’Ariane est affiché en bandeau horizontal compact sous la barre de pr
 ### Mapping des sections
 
 - **INTRO** : slide 1
-- **ENVIRONNEMENT** : slides 2 à 5
+- **CONTEXTE** : slides 2 à 5
 - **ANALYSE** : slides 6 à 7
 - **SOLUTION** : slides 8 à 9
 - **RÉALISATION** : slides 10 à 12
