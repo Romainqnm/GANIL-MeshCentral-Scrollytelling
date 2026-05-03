@@ -4,7 +4,9 @@
   "description": "> **Sujet :** Modernisation de la télémaintenance sécurisée (Migration VNC vers MeshCentral). > **Auteur :** Romain QUONIAM (Service G2I)",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "serve .",
+    "start": "serve ."
   },
   "repository": {
     "type": "git",

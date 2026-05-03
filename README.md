@@ -12,7 +12,7 @@ Ce dépôt contient une soutenance au format **scrollytelling web** :
 - barre de progression + compteur,
 - navigation rapide via **fil d’Ariane**.
 
-L’application est volontairement simple : un seul fichier principal (`index.html`) et des assets d’images dans `public/diapo/`.
+L’application se compose désormais d'un portail d'accès (`index.html`) et du fichier de la présentation GANIL (`ganil.html`), avec des assets d’images dans `public/diapo/`.
 
 ## 🧱 Stack réelle du projet
 
@@ -61,7 +61,9 @@ Puis ouvrir dans le navigateur :
 ## 📁 Arborescence minimale
 
 ```text
-index.html
+index.html       (Portail d'accès)
+ganil.html       (Présentation GANIL)
+Diapo_E5/        (Présentation E5)
 public/
   diapo/
 README.md

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Soutenance E5 - Diapositives</title>
+    <meta
+      name="description"
+      content="Diapositives E5 avec transitions immersives."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-deep: #1a0b2e;
+        --bg-night: #0a0314;
+        --cyan: #d946ef;
+        --neon-blue: #a855f7;
+        --line-white: #e2e8f0;
+        --transition-duration: 1200ms;
+        --grind-pink: #ec4899;
+        --grind-purple: #8b5cf6;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Inter, sans-serif;
+        background: radial-gradient(circle at 20% 0%, #2e1065 0%, var(--bg-deep) 40%, var(--bg-night) 100%);
+        color: #f3e8ff;
+        transition: background 260ms ease, color 260ms ease;
+      }
+
+      body.theme-dark {
+        background: radial-gradient(circle at 20% 0%, #3b0764 0%, #2e1065 34%, #170535 65%, #0a0314 100%);
+      }
+
+      body.theme-light {
+        background: radial-gradient(circle at 50% -10%, #4c1d95 0%, #3b0764 46%, #1e1b4b 100%);
+      }
+
+      #progressTrack {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 70;
+        width: 100%;
+        height: 0.95rem;
+        background: rgba(26, 11, 46, 0.64);
+        border-bottom: 1px solid rgba(168, 85, 247, 0.42);
+        backdrop-filter: blur(10px) saturate(130%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+
+      #progressBar {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #7e22ce, #c026d3 45%, #ec4899 100%);
+        box-shadow: 0 0 16px rgba(217, 70, 239, 0.75);
+        transition: width 260ms ease;
+      }
+
+      #slideCounter {
+        position: fixed;
+        right: 1rem;
+        top: 1.45rem;
+        z-index: 80;
+        min-width: 6.4rem;
+        padding: 0.52rem 0.92rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-align: center;
+        color: #f3e8ff;
+        background: rgba(46, 16, 101, 0.74);
+        border: 1px solid rgba(217, 70, 239, 0.36);
+        backdrop-filter: blur(14px) saturate(145%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(10, 3, 20, 0.45);
+      }
+
+      #sessionDate {
+        position: fixed;
+        left: 1rem;
+        top: 1.45rem;
+        z-index: 80;
+        min-width: 7.4rem;
+        padding: 0.52rem 0.92rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-align: center;
+        color: #f3e8ff;
+        background: rgba(46, 16, 101, 0.74);
+        border: 1px solid rgba(217, 70, 239, 0.36);
+        backdrop-filter: blur(14px) saturate(145%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(10, 3, 20, 0.45);
+      }
+
+      #breadcrumb {
+        position: fixed;
+        left: 50%;
+        top: 1.12rem;
+        z-index: 86;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.18rem;
+        max-width: calc(100vw - 1.8rem);
+        padding: 0.28rem 0.34rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.28);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        backdrop-filter: blur(12px) saturate(140%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transform: translateX(-50%) translateY(-8px);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        overflow-x: auto;
+        scrollbar-width: none;
+        transition: opacity 220ms ease, transform 220ms ease;
+      }
+
+      #breadcrumb::-webkit-scrollbar {
+        display: none;
+      }
+
+      .breadcrumb-item {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: rgba(148, 163, 184, 0.9);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.012em;
+        white-space: nowrap;
+        padding: 0.22rem 0.42rem;
+        border-radius: 999px;
+        cursor: pointer;
+        text-shadow: 0 0 10px rgba(148, 163, 184, 0.16);
+        transition: color 180ms ease, background-color 180ms ease, font-size 220ms ease, text-shadow 180ms ease;
+      }
+
+      .breadcrumb-item:hover,
+      .breadcrumb-item:focus-visible {
+        color: rgba(203, 213, 225, 0.96);
+        background: rgba(148, 163, 184, 0.14);
+        text-shadow: 0 0 12px rgba(148, 163, 184, 0.32);
+        outline: none;
+      }
+
+      .breadcrumb-item.active {
+        color: #ec4899;
+        font-size: 0.76rem;
+        font-weight: 800;
+        background: rgba(236, 72, 153, 0.08);
+        text-shadow: 0 0 14px rgba(236, 72, 153, 0.48);
+      }
+
+      #stage {
+        position: fixed;
+        inset: 0;
+        padding: 1.15rem 0.65rem 0.65rem;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 1.15rem 0.65rem 0.65rem;
+        border-radius: 1.25rem;
+        border: 1px solid rgba(56, 189, 248, 0.22);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(0.2rem, 0.9vw, 0.65rem);
+        opacity: 0;
+        transform: scale(1.02);
+        pointer-events: none;
+        transition: opacity 320ms ease, transform 320ms ease, background 220ms ease, box-shadow 220ms ease;
+        transform-style: preserve-3d;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background:
+          linear-gradient(160deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0) 42%),
+          radial-gradient(circle at 85% 10%, rgba(217, 70, 239, 0.14), transparent 30%);
+      }
+
+      .slide[data-theme="dark"] {
+        background: linear-gradient(145deg, rgba(7, 15, 34, 0.96), rgba(3, 8, 20, 0.96));
+        box-shadow: 0 26px 58px rgba(2, 6, 23, 0.72);
+      }
+
+      .slide[data-theme="light"] {
+        background: linear-gradient(145deg, rgba(9, 22, 50, 0.94), rgba(6, 16, 36, 0.94));
+        box-shadow: 0 24px 54px rgba(2, 6, 23, 0.66);
+      }
+
+      .slide.active {
+        display: flex;
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+      }
+
+      .slide.transition-out {
+        display: flex;
+        animation: slideSinkOut var(--transition-duration) cubic-bezier(0.15, 0.72, 0.22, 1) both;
+      }
+
+      .slide.transition-in {
+        display: flex;
+        animation: slideRiseIn var(--transition-duration) cubic-bezier(0.16, 0.74, 0.24, 1) both;
+      }
+
+      .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 0.95rem;
+      }
+
+      .slide[data-theme="dark"] img {
+        background: #020617;
+      }
+
+      .slide[data-theme="light"] img {
+        background: #ffffff;
+      }
+
+      #fxOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 75;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+      }
+
+      #fxOverlay.transitioning {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+      }
+
+      #fxOverlay:not(.transitioning) .fx-layer {
+        opacity: 0 !important;
+        animation: none !important;
+      }
+
+      .fx-layer {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+      }
+
+      .fx-dim {
+        background:
+          radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.36), rgba(2, 6, 23, 0.88)),
+          linear-gradient(180deg, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.85));
+      }
+
+      /* ---------- 1) WARP (VITESSE / GRIND) ---------- */
+      .fx-warp {
+        background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15), rgba(10, 3, 20, 0.95));
+        perspective: 1000px;
+      }
+      .fx-warp .warp-stars, .fx-warp .warp-stars-2 {
+        position: absolute;
+        inset: -50%;
+        background-image: 
+          radial-gradient(2px 2px at 20px 30px, #e879f9, rgba(0,0,0,0)),
+          radial-gradient(2px 2px at 40px 70px, #c026d3, rgba(0,0,0,0)),
+          radial-gradient(2px 2px at 50px 160px, #f472b6, rgba(0,0,0,0)),
+          radial-gradient(2px 2px at 90px 40px, #fdf4ff, rgba(0,0,0,0)),
+          radial-gradient(2px 2px at 130px 80px, #d946ef, rgba(0,0,0,0)),
+          radial-gradient(2px 2px at 160px 120px, #86198f, rgba(0,0,0,0));
+        background-repeat: repeat;
+        background-size: 200px 200px;
+        opacity: 0;
+        transform: translateZ(-500px) scale(1);
+      }
+      .fx-warp .warp-stars-2 {
+        background-size: 300px 300px;
+        transform: translateZ(-800px) scale(1) rotate(45deg);
+      }
+      .fx-warp .warp-center {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.4), transparent 60%);
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      #fxOverlay.transitioning.effect-warp .fx-warp {
+        opacity: 1;
+        animation: warpOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-warp .fx-dim {
+        animation: dimPulse var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-warp .warp-stars {
+        animation: warpDive var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      #fxOverlay.transitioning.effect-warp .warp-stars-2 {
+        animation: warpDive2 var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1) both;
+      }
+      #fxOverlay.transitioning.effect-warp .warp-center {
+        animation: warpFlash var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+
+      /* ---------- 2) GLITCH (CYBER / INSTABLE) ---------- */
+      .fx-glitch {
+        background: #0a0314;
+        overflow: hidden;
+      }
+      .fx-glitch .glitch-slice {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(217, 70, 239, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+        opacity: 0;
+      }
+      .fx-glitch .slice-1 { clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%); }
+      .fx-glitch .slice-2 { clip-path: polygon(0 40%, 100% 40%, 100% 60%, 0 60%); }
+      .fx-glitch .slice-3 { clip-path: polygon(0 70%, 100% 70%, 100% 90%, 0 90%); }
+      .fx-glitch .glitch-noise {
+        position: absolute;
+        inset: -20%;
+        background: repeating-radial-gradient(circle at 50% 50%, transparent 0, rgba(236, 72, 153, 0.05) 10px, transparent 20px);
+        opacity: 0;
+      }
+
+      #fxOverlay.transitioning.effect-glitch .fx-glitch {
+        opacity: 1;
+        animation: glitchOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-glitch .fx-dim {
+        animation: dimPulseStrong var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-glitch .slice-1 { animation: glitchJitter1 var(--transition-duration) linear both; }
+      #fxOverlay.transitioning.effect-glitch .slice-2 { animation: glitchJitter2 var(--transition-duration) linear both; }
+      #fxOverlay.transitioning.effect-glitch .slice-3 { animation: glitchJitter3 var(--transition-duration) linear both; }
+      #fxOverlay.transitioning.effect-glitch .glitch-noise { animation: noiseFlicker var(--transition-duration) steps(5) both; }
+
+      /* ---------- 3) PULSE (ONDE DE CHOC / RYTHME) ---------- */
+      .fx-pulse {
+        background: radial-gradient(circle at 50% 50%, rgba(10, 3, 20, 0.9), #05010a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fx-pulse .pulse-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 2px solid rgba(217, 70, 239, 0.8);
+        box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), inset 0 0 20px rgba(236, 72, 153, 0.4);
+        opacity: 0;
+        transform: scale(0);
+      }
+      .fx-pulse .ring-1 { width: 30vw; height: 30vw; border-width: 4px; }
+      .fx-pulse .ring-2 { width: 60vw; height: 60vw; border-color: rgba(236, 72, 153, 0.6); }
+      .fx-pulse .ring-3 { width: 100vw; height: 100vw; border-color: rgba(168, 85, 247, 0.4); }
+
+      #fxOverlay.transitioning.effect-pulse .fx-pulse {
+        opacity: 1;
+        animation: pulseOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-pulse .fx-dim {
+        animation: dimPulse var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-pulse .ring-1 { animation: pulseExpand var(--transition-duration) cubic-bezier(0.1, 0.8, 0.3, 1) both; }
+      #fxOverlay.transitioning.effect-pulse .ring-2 { animation: pulseExpand var(--transition-duration) cubic-bezier(0.1, 0.8, 0.3, 1) 0.1s both; }
+      #fxOverlay.transitioning.effect-pulse .ring-3 { animation: pulseExpand var(--transition-duration) cubic-bezier(0.1, 0.8, 0.3, 1) 0.2s both; }
+
+      /* ---------- 4) ASCEND (ASCENSION / PROGRESSION) ---------- */
+      .fx-ascend {
+        background: linear-gradient(0deg, #170535 0%, #0a0314 100%);
+        overflow: hidden;
+      }
+      .fx-ascend .ascend-beam {
+        position: absolute;
+        bottom: -20%;
+        width: 10%;
+        height: 140%;
+        background: linear-gradient(0deg, rgba(236, 72, 153, 0), rgba(217, 70, 239, 0.4), rgba(168, 85, 247, 0));
+        opacity: 0;
+        transform: translateY(100%);
+      }
+      .fx-ascend .beam-1 { left: 20%; width: 15%; filter: blur(20px); }
+      .fx-ascend .beam-2 { left: 50%; width: 8%; filter: blur(10px); }
+      .fx-ascend .beam-3 { left: 80%; width: 20%; filter: blur(30px); }
+      
+      #fxOverlay.transitioning.effect-ascend .fx-ascend {
+        opacity: 1;
+        animation: ascendOverlayCycle var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-ascend .fx-dim {
+        animation: dimPulseStrong var(--transition-duration) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+      }
+      #fxOverlay.transitioning.effect-ascend .beam-1 { animation: beamRise var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1) both; }
+      #fxOverlay.transitioning.effect-ascend .beam-2 { animation: beamRise var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1) 0.1s both; }
+      #fxOverlay.transitioning.effect-ascend .beam-3 { animation: beamRise var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1) 0.05s both; }
+
+      /* ---------- KEYFRAMES ---------- */
+      @keyframes warpOverlayCycle {
+        0% { opacity: 0; }
+        25% { opacity: 1; }
+        75% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes warpDive {
+        0% { opacity: 0; transform: translateZ(-500px) scale(1); }
+        20% { opacity: 0.8; }
+        100% { opacity: 0; transform: translateZ(500px) scale(3); }
+      }
+      @keyframes warpDive2 {
+        0% { opacity: 0; transform: translateZ(-800px) scale(1) rotate(45deg); }
+        20% { opacity: 0.6; }
+        100% { opacity: 0; transform: translateZ(300px) scale(4) rotate(45deg); }
+      }
+      @keyframes warpFlash {
+        0% { opacity: 0; transform: scale(0.5); }
+        40% { opacity: 0.9; transform: scale(1.5); }
+        100% { opacity: 0; transform: scale(2.5); }
+      }
+
+      @keyframes glitchOverlayCycle {
+        0% { opacity: 0; }
+        25% { opacity: 1; }
+        75% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes glitchJitter1 {
+        0% { opacity: 0; transform: translateX(0); }
+        10% { opacity: 0.8; transform: translateX(-20px); filter: hue-rotate(90deg); }
+        20% { transform: translateX(15px); }
+        30% { transform: translateX(-10px); filter: hue-rotate(-90deg); }
+        40% { transform: translateX(25px); }
+        50% { opacity: 0.9; transform: translateX(-5px); }
+        60% { transform: translateX(10px); filter: hue-rotate(45deg); }
+        70% { transform: translateX(-15px); }
+        80% { opacity: 0; transform: translateX(0); }
+        100% { opacity: 0; }
+      }
+      @keyframes glitchJitter2 {
+        0% { opacity: 0; transform: translateX(0); }
+        15% { opacity: 0.7; transform: translateX(25px); filter: hue-rotate(-45deg); }
+        25% { transform: translateX(-15px); }
+        35% { transform: translateX(20px); }
+        45% { transform: translateX(-25px); filter: hue-rotate(90deg); }
+        55% { opacity: 0.8; transform: translateX(10px); }
+        65% { transform: translateX(-20px); }
+        75% { opacity: 0; transform: translateX(0); }
+        100% { opacity: 0; }
+      }
+      @keyframes glitchJitter3 {
+        0% { opacity: 0; transform: translateX(0); }
+        12% { opacity: 0.9; transform: translateX(-15px); filter: invert(1); }
+        22% { transform: translateX(30px); }
+        32% { transform: translateX(-25px); }
+        42% { transform: translateX(10px); filter: invert(0); }
+        52% { opacity: 0.7; transform: translateX(-20px); }
+        62% { transform: translateX(15px); }
+        72% { opacity: 0; transform: translateX(0); }
+        100% { opacity: 0; }
+      }
+      @keyframes noiseFlicker {
+        0% { opacity: 0; transform: translateY(0); }
+        10% { opacity: 0.3; transform: translateY(-5%); }
+        30% { opacity: 0.1; transform: translateY(5%); }
+        50% { opacity: 0.4; transform: translateY(-2%); }
+        70% { opacity: 0.2; transform: translateY(3%); }
+        90% { opacity: 0; transform: translateY(0); }
+        100% { opacity: 0; }
+      }
+
+      @keyframes pulseOverlayCycle {
+        0% { opacity: 0; }
+        25% { opacity: 1; }
+        75% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes pulseExpand {
+        0% { opacity: 0; transform: scale(0); border-width: 10px; }
+        20% { opacity: 0.8; }
+        60% { opacity: 0; transform: scale(1.5); border-width: 1px; }
+        100% { opacity: 0; transform: scale(2); }
+      }
+
+      @keyframes ascendOverlayCycle {
+        0% { opacity: 0; }
+        25% { opacity: 1; }
+        75% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+      @keyframes beamRise {
+        0% { opacity: 0; transform: translateY(100%); }
+        20% { opacity: 0.8; transform: translateY(20%); }
+        80% { opacity: 0; transform: translateY(-100%); }
+        100% { opacity: 0; }
+      }
+
+      @keyframes dimPulse {
+        0% { opacity: 0; }
+        16% { opacity: 0.36; }
+        52% { opacity: 0.58; }
+        78% { opacity: 0.44; }
+        100% { opacity: 0; }
+      }
+      @keyframes dimPulseStrong {
+        0% { opacity: 0; }
+        18% { opacity: 0.46; }
+        50% { opacity: 0.72; }
+        78% { opacity: 0.54; }
+        100% { opacity: 0; }
+      }
+
+      @keyframes slideSinkOut {
+        0% {
+          transform: scale(1) translateZ(0) rotateX(0deg);
+          filter: brightness(1) saturate(1);
+          opacity: 1;
+        }
+        56% {
+          transform: scale(1.09) translateY(1.2%) rotateX(4deg);
+          filter: brightness(1.04) saturate(1.05);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.82) translateY(5%) rotateX(14deg);
+          filter: brightness(0.68) saturate(1.24);
+          opacity: 0;
+        }
+      }
+
+      @keyframes slideRiseIn {
+        0% {
+          transform: scale(1.22) translateY(-4%) rotateX(-10deg);
+          filter: brightness(1.2) saturate(1.15);
+          opacity: 0;
+        }
+        52% {
+          transform: scale(1.03) translateY(0.5%) rotateX(1deg);
+          filter: brightness(1.04) saturate(1.05);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1) translateY(0) rotateX(0deg);
+          filter: brightness(1) saturate(1);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="theme-dark">
+    <div id="progressTrack"><div id="progressBar"></div></div>
+    <div id="sessionDate">Soutenance E5</div>
+    <div id="slideCounter" aria-live="polite">1/12</div>
+    <nav id="breadcrumb" aria-label="Fil d'Ariane"></nav>
+
+    <main id="stage"></main>
+
+    <div id="fxOverlay" aria-hidden="true">
+      <div class="fx-layer fx-dim"></div>
+
+      <div class="fx-layer fx-warp">
+        <div class="warp-stars"></div>
+        <div class="warp-stars-2"></div>
+        <div class="warp-center"></div>
+      </div>
+
+      <div class="fx-layer fx-glitch">
+        <div class="glitch-slice slice-1"></div>
+        <div class="glitch-slice slice-2"></div>
+        <div class="glitch-slice slice-3"></div>
+        <div class="glitch-noise"></div>
+      </div>
+
+      <div class="fx-layer fx-pulse">
+        <div class="pulse-ring ring-1"></div>
+        <div class="pulse-ring ring-2"></div>
+        <div class="pulse-ring ring-3"></div>
+      </div>
+
+      <div class="fx-layer fx-ascend">
+        <div class="ascend-beam beam-1"></div>
+        <div class="ascend-beam beam-2"></div>
+        <div class="ascend-beam beam-3"></div>
+        <div class="ascend-particles"></div>
+      </div>
+    </div>
+
+    <script>
+      const stage = document.getElementById("stage");
+      const progressBar = document.getElementById("progressBar");
+      const slideCounter = document.getElementById("slideCounter");
+      const breadcrumb = document.getElementById("breadcrumb");
+      const fxOverlay = document.getElementById("fxOverlay");
+      const dataRain = document.getElementById("dataRain");
+
+      const TRANSITION_DURATION = 1420;
+      const SWAP_POINT_MS = 710;
+
+      const slidesConfig = Array.from({ length: 12 }, (_, index) => {
+        return {
+          src: `/Diapo_E5/${index + 1}.png`,
+          theme: index === 0 || index === 11 ? "dark" : "light",
+        };
+      });
+
+      const slides = [];
+      const breadcrumbItems = [];
+
+      const breadcrumbSections = [
+        { label: "PRÉSENTATION", slides: [0], target: 0 },
+        { label: "SNCF", slides: [1, 2], target: 1 },
+        { label: "GANIL", slides: [3, 4, 5, 6, 7], target: 3 },
+        { label: "VEILLE", slides: [8], target: 8 },
+        { label: "BILAN", slides: [9, 10, 11], target: 9 },
+      ];
+
+      let currentIndex = 0;
+      let pendingIndex = 0;
+      let transitionState = "idle";
+      let wheelAccumulator = 0;
+      let transitionSafetyTimer = null;
+
+      const transitionEffectByEdge = {
+        "0-1": "warp",
+        "1-2": "glitch",
+        "2-3": "ascend",
+        "3-4": "pulse",
+        "4-5": "warp",
+        "5-6": "glitch",
+        "6-7": "pulse",
+        "7-8": "ascend",
+        "8-9": "warp",
+        "9-10": "glitch",
+        "10-11": "ascend"
+      };
+
+      function buildSlides() {
+        const fragment = document.createDocumentFragment();
+
+        slidesConfig.forEach((item, index) => {
+          const section = document.createElement("section");
+          section.className = "slide";
+          section.dataset.theme = item.theme;
+
+          const image = document.createElement("img");
+          image.src = item.src;
+          image.alt = `Diapositive ${index + 1}`;
+
+          section.appendChild(image);
+          fragment.appendChild(section);
+          slides.push(section);
+        });
+
+        stage.appendChild(fragment);
+      }
+
+      function buildBreadcrumb() {
+        const fragment = document.createDocumentFragment();
+
+        breadcrumbSections.forEach((sectionConfig, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "breadcrumb-item";
+          button.textContent = sectionConfig.label;
+          button.dataset.sectionIndex = String(index);
+          button.addEventListener("click", () => {
+            goToSlide(sectionConfig.target);
+          });
+
+          fragment.appendChild(button);
+          breadcrumbItems.push(button);
+        });
+
+        breadcrumb.appendChild(fragment);
+      }
+
+      function buildDataRain() {
+        const fragment = document.createDocumentFragment();
+
+        for (let i = 0; i < 54; i += 1) {
+          const bit = document.createElement("span");
+          bit.textContent = Math.random() > 0.5 ? "1" : "0";
+          bit.style.setProperty("--x", (2 + (i * 97) % 96).toString());
+          bit.style.setProperty("--size", (10 + (i % 8)).toString());
+          bit.style.setProperty("--delay", (i * 24).toString());
+          fragment.appendChild(bit);
+        }
+
+        dataRain.appendChild(fragment);
+      }
+
+      function applyTheme(index) {
+        const theme = slidesConfig[index].theme;
+        document.body.classList.toggle("theme-light", theme === "light");
+        document.body.classList.toggle("theme-dark", theme === "dark");
+      }
+
+      function updateCounter(index) {
+        slideCounter.textContent = `${index + 1}/${slides.length}`;
+      }
+
+      function updateProgress(index) {
+        const ratio = slides.length > 1 ? index / (slides.length - 1) : 0;
+        progressBar.style.width = `${Math.max(0, Math.min(ratio * 100, 100))}%`;
+      }
+
+      function updateBreadcrumb(index) {
+        const activeSectionIndex = breadcrumbSections.findIndex((sectionConfig) => {
+          return sectionConfig.slides.includes(index);
+        });
+
+        breadcrumbItems.forEach((item, itemIndex) => {
+          const isActive = itemIndex === activeSectionIndex;
+          item.classList.toggle("active", isActive);
+          item.setAttribute("aria-current", isActive ? "location" : "false");
+        });
+      }
+
+      function normalizeSlideVisibility() {
+        slides.forEach((slide, slideIndex) => {
+          const shouldShow =
+            slideIndex === currentIndex ||
+            slide.classList.contains("transition-out") ||
+            slide.classList.contains("transition-in");
+          slide.style.display = shouldShow ? "flex" : "none";
+        });
+      }
+
+      function showSlide(index) {
+        slides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("active", slideIndex === index);
+          slide.classList.remove("transition-out", "transition-in");
+        });
+
+        normalizeSlideVisibility();
+
+        applyTheme(index);
+        updateCounter(index);
+        updateProgress(index);
+        updateBreadcrumb(index);
+      }
+
+      function goToSlide(targetIndex) {
+        if (transitionState !== "idle") {
+          return;
+        }
+
+        const boundedTarget = Math.max(0, Math.min(targetIndex, slides.length - 1));
+        if (boundedTarget === currentIndex) {
+          return;
+        }
+
+        if (Math.abs(boundedTarget - currentIndex) === 1) {
+          runTransition(boundedTarget > currentIndex ? 1 : -1);
+          return;
+        }
+
+        currentIndex = boundedTarget;
+        pendingIndex = boundedTarget;
+
+        slides.forEach((slide, index) => {
+          slide.classList.toggle("active", index === currentIndex);
+          slide.classList.remove("transition-out", "transition-in");
+        });
+
+        normalizeSlideVisibility();
+        applyTheme(currentIndex);
+        updateCounter(currentIndex);
+        updateProgress(currentIndex);
+        updateBreadcrumb(currentIndex);
+      }
+
+      function getTargetIndex(step) {
+        const target = currentIndex + step;
+        return Math.max(0, Math.min(target, slides.length - 1));
+      }
+
+      function clearEffectClasses() {
+        fxOverlay.classList.remove("effect-warp", "effect-glitch", "effect-pulse", "effect-ascend", "transitioning");
+        void fxOverlay.offsetHeight;
+      }
+
+      function getTransitionEffect(fromIndex, toIndex) {
+        const edgeKey = `${Math.min(fromIndex, toIndex)}-${Math.max(fromIndex, toIndex)}`;
+        if (transitionEffectByEdge[edgeKey]) {
+           return transitionEffectByEdge[edgeKey];
+        }
+        const distance = Math.abs(toIndex - fromIndex);
+        if (distance > 2) return "warp";
+        return "pulse";
+      }
+
+      function finalizeTransition() {
+        transitionState = "idle";
+        clearEffectClasses();
+
+        if (transitionSafetyTimer) {
+          clearTimeout(transitionSafetyTimer);
+          transitionSafetyTimer = null;
+        }
+
+        slides.forEach((slide) => {
+          slide.classList.remove("transition-out", "transition-in");
+        });
+
+        normalizeSlideVisibility();
+      }
+
+      function runTransition(step) {
+        if (transitionState !== "idle") {
+          return;
+        }
+
+        const targetIndex = getTargetIndex(step);
+        if (targetIndex === currentIndex) {
+          return;
+        }
+
+        pendingIndex = targetIndex;
+        transitionState = "running";
+        const effect = getTransitionEffect(currentIndex, targetIndex);
+
+        const outgoing = slides[currentIndex];
+        outgoing.classList.remove("transition-in");
+        outgoing.classList.add("transition-out");
+        normalizeSlideVisibility();
+
+        clearEffectClasses();
+        fxOverlay.classList.add(`effect-${effect}`);
+        void fxOverlay.offsetWidth;
+        fxOverlay.classList.add("transitioning");
+
+        if (transitionSafetyTimer) {
+          clearTimeout(transitionSafetyTimer);
+        }
+        transitionSafetyTimer = setTimeout(finalizeTransition, TRANSITION_DURATION + 180);
+
+        window.setTimeout(() => {
+          currentIndex = pendingIndex;
+          slides.forEach((slide, index) => {
+            slide.classList.toggle("active", index === currentIndex);
+          });
+
+          const incoming = slides[currentIndex];
+          incoming.classList.remove("transition-out");
+          incoming.classList.add("transition-in");
+          normalizeSlideVisibility();
+
+          applyTheme(currentIndex);
+          updateCounter(currentIndex);
+          updateProgress(currentIndex);
+          updateBreadcrumb(currentIndex);
+        }, SWAP_POINT_MS);
+      }
+
+      function move(step) {
+        runTransition(step);
+      }
+
+      fxOverlay.addEventListener("animationend", (event) => {
+        if (
+          event.animationName !== "warpOverlayCycle" &&
+          event.animationName !== "glitchOverlayCycle" &&
+          event.animationName !== "pulseOverlayCycle" &&
+          event.animationName !== "ascendOverlayCycle"
+        ) {
+          return;
+        }
+
+        finalizeTransition();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.code === "Space" || event.code === "ArrowRight" || event.code === "ArrowDown" || event.code === "PageDown") {
+          event.preventDefault();
+          move(1);
+          return;
+        }
+
+        if (event.code === "ArrowLeft" || event.code === "ArrowUp" || event.code === "PageUp") {
+          event.preventDefault();
+          move(-1);
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("a, button, input, textarea, select, label")) {
+          return;
+        }
+
+        move(1);
+      });
+
+      document.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault();
+
+          if (transitionState !== "idle") {
+            return;
+          }
+
+          wheelAccumulator += event.deltaY;
+          if (Math.abs(wheelAccumulator) < 42) {
+            return;
+          }
+
+          move(wheelAccumulator > 0 ? 1 : -1);
+          wheelAccumulator = 0;
+        },
+        { passive: false }
+      );
+
+      buildSlides();
+      buildBreadcrumb();
+      showSlide(currentIndex);
+    </script>
+  </body>
+</html>
